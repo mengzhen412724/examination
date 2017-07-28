@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>考试系统</title>
+    <link rel="stylesheet" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../js/bootstrap3.3.7/css/bootstrap-table.css">
+    <link rel="stylesheet" href="../js/bootstrap_fileupload/css/fileinput.min.css">
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <script src="../js/jquery/js/jquery.json.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap3.3.7/js/locale/bootstrap-table-zh-CN.js"></script>
+    <script language="javascript" type="text/javascript" src="../js/datePicker/WdatePicker.js"></script>
+    <script src="../js/bootstrap3.3.7/validatior/js/bootstrapValidator.min.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap3.3.7/validatior/css/bootstrapValidator.min.css">
+    <script src="../js/bootstrap_fileupload/fillinput.min.js"></script>
+    <script src="../js/bootstrap_fileupload/zh.js"></script>
+    <script type="text/javascript" src="../js/core.js"></script>
+    <script type="text/javascript" src="../js/addTest.js"></script>
+    <script type="text/javascript" src="../js/editTest.js"></script>
+    <script type="text/javascript" src="../js/totalScore.js"></script>
+    <script type="text/javascript" src="../js/upload.js"></script>
+    <script>
+        function init(examinationName){
+            $table = $('#rangeTable').bootstrapTable({
+                method: 'get',
+                url: 'http://'+localhost+':'+port+'/examination/examination/select',
+                height:$(window).height() - 200,
+                striped: true,
+                pagination: false,
+                dataType:'json',
+                pageSize: 50,
+                pageList: [10, 25, 50, 100, 200],
+                search: false,
+                sidePagination: "client",
+                showColumns: false,
+                showHeader:true,
+                clickToSelect:true,
+                minimunCountColumns: 2,
+                checkboxHeader:true,
+                singleSelect:true,
+                columns: [{
+                    checkbox:true,
+                }, {
+                        field: 'ID',
+                        title: 'ID',
+                        sortable: true
+                },{
+                    field: 'EXAMINATIOM_NAME',
+                    title: '考试名称',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'EXAMINATIOM_START_TIME',
+                    title: '开始时间',
+                    width:200,
+                    formatter:function(value,row,index){
+                        return changeTime(value);
+                    },
+                    sortable: true
+                }, {
+                    field: 'EXAMINATIOM_END_TIME',
+                    title: '结束时间',
+                    width:200,
+                    formatter:function(value,row,index){
+                        return changeTime(value);
+                    },
+                    sortable: true,
+                }, {
+                    field: 'SINGLE_CHOICE_QUESTION_NUM',
+                    title: '单选题个数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'SINGLE_CHOICE_QUESTION_SCORE',
+                    title: '单选分数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'MULTIPLE_CHOICE_QUESTION_NUM',
+                    title: '多选个数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'MULTIPLE_CHOICE_QUESTION_SCORE',
+                    title: '多选分数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'TRUE_OF_FALSE_QUESTION_NUM',
+                    title: '判断个数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'TRUE_OF_FALSE_QUESTION_SCORE',
+                    title: '判断分数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'SHORT_ANSWER_QUESTION_NUM',
+                    title: '简答个数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'SHORT_ANSWER_QUESTION_SCORE',
+                    title: '简答分数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'GAP_FILLING_NUM',
+                    title: '填空个数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'GAP_FILLING_SCORE',
+                    title: '填空分数',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'TOTAL_SCORE',
+                    title: '总分',
+                    width:150,
+                    sortable: true
+                }, {
+                    field: 'EXAMINATIOM_DESC',
+                    title: '考试说明',
+                    width:150,
+                    sortable: true
+                }],
+
+
+            });
+        }
+
+
+        $(function () {
+            init();
+            $("#rangeTable").bootstrapTable('hideColumn','ID');
+//            $("#myModal1").on('hide.bs.modal', initEdit());
+//            testValidatior();
+
+        });
+        function table_refresh() {
+            $("#rangeTable").bootstrapTable('refresh',{
+                url:'http://'+localhost+':'+port+'/examination/examination/select',
+            })
+        }
+
+        function search(){
+            var text = $("#testName").val();
+            if(text != ""){
+                $("#rangeTable").bootstrapTable('refresh',{
+                    url:'http://'+localhost+':'+port+'/examination/exam/getQuestions?examinationName='+text,
+                })
+            }else{
+                $("#rangeTable").bootstrapTable('refresh',{
+                    url:'http://'+localhost+':'+port+'/examination/exam/getQuestions?examinationName=第一次',
+                })
+            }
+        }
+
+
+        function gotoScore() {
+            var selectedDatas =$("#rangeTable").bootstrapTable("getSelections");
+            if(selectedDatas.length ==1){
+                window.open("./questionJudge.html?examinationId="+selectedDatas[0].ID);
+            }else{
+                alert('请选择修改内容');
+            }
+
+        }
+        
+        function table_delete(){
+            var selected = $("#rangeTable").bootstrapTable('getSelections');
+            if(selected.length != 1){
+                alert('请选择考试安排后删除！');
+            }else{
+                var id = selected[0].ID;
+                $.ajax({
+                    type:'DELETE',
+                    url:'http://'+localhost+':'+port+'/examination/examination/delete?id='+id,
+                    success:function (data) {
+                        $("#DeleteForm").modal('hide');
+                        alert(data);
+                        table_refresh();
+                    }
+                })
+            }
+
+        }
+        function init_upload(){
+            var oFileInput = new FileInput();
+            oFileInput.Init("txt_file", "http://"+localhost+":"+port+"/examination/file/upload");
+        }
+    </script>
+
+</head>
+<body>
+<div >
+    <div style="width: 100%" >
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active">
+                <a href="#range" data-toggle="tab">
+                    考试安排模块
+                </a>
+            </li>
+            <li><a href="#modoule" data-toggle="tab" onclick="init_upload()">总题库模块</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="range" style="overflow: auto">
+                <!--<div style="margin: 10px">
+                    <form title="查询条件" style="margin-top: 5px;float:left;">
+                        <label value="考试名称" >考试名称</label>
+                        <input type="text" id="testName" style="width: 200px" />
+                    </form>
+                    <button id="btnSearch" type="button" class="btn  btn-success" data-toggle="modal"
+                            style="margin-left: 20px" onclick="search()">
+                        <span class="glyphicon " aria-hidden="true"></span>查询
+                    </button>
+                </div>-->
+                <div style="margin: 10px" >
+
+                    <button id="build" type="button" class="btn  btn-success"
+                            data-toggle="modal" data-target="#myModal" href="addTestRange.html" >
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+                    </button>
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" >
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <button id="btnEdit" type="button" class="btn   btn-warning"
+                            data-show="false" onclick="edit_edit()">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>修改
+                    </button>
+                    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <button id="btnDel" type="button" class="btn  btn-danger" data-toggle="modal"
+                            data-target="#DeleteForm" >
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>删除
+                    </button>
+                    <div class="modal fade" id="DeleteForm" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">
+                                        删除考试安排
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    是否删除该场考试?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="table_delete()">
+                                        确认
+                                    </button>
+                                    <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">取消
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <button id="give_score" type="button" class="btn  btn-success"  onclick="gotoScore()">
+                        <span class="glyphicon " aria-hidden="true"></span>主观题打分
+                    </button>
+                    <button id="get_score" type="button" class="btn  btn-success"  onclick="getScore()">
+                        <span class="glyphicon " aria-hidden="true"></span>查看考生成绩
+                    </button>
+
+                </div>
+                <div class="table-responsive">
+                    <table id="rangeTable" style="overflow: auto"></table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="modoule">
+                <form id="form"     enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="file" name="txt_file" id="txt_file" multiple class="file-loading"  />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>考试登录系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/peskin.css" />
+
+    <!--bootstrap.min.css，引用后成功-->
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <script src="../js/jquery/js/jquery-ui.js"></script>
+    <script src="../js/jquery/js/jquery.json.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/core.js"></script>
+
+
+    <script>
+
+        var flag;
+        function login(){
+            if(flag){
+                var username = $("#userName").val();
+                var pwd = $("#pwd").val();
+                $.ajax({
+                    url:"http://"+localhost+":"+port+"/examination/user/login",
+                    data:JSON.stringify({"loginName":username,"passWd":pwd}),
+                    type:"POST",
+                    headers:{
+                        'Content-Type' : 'application/json'
+                    },
+                    success:function(data){
+                        if (data == "用户名不存在"){
+                            clearAll();
+                            $("#userCheck").html(data);
+                            return;
+                        }else if(data == "密码错误"){
+                            clearAll();
+                            $("#codeCheck").html(data);
+                            return;
+                        }else if(data.indexOf("登录成功") > -1){
+                            var role = data.split(':')[1];
+                            if (role == 1){
+                                setCookie("loginName",username);
+                                var aaa = getCookie("loginName");
+                                window.location.href = "begin.html?loginName="+username;
+                            }else{
+                                window.location.href = "../admin/admin.html?loginName="+encodeURI(username);
+                            }
+
+                        }
+                    }
+                })
+            }
+
+
+        }
+        function clearAll() {
+            $("#userCheck").html("");
+            $("#codeCheck").html("");
+        }
+        
+        function check() {
+            var username = $("#userName").val();
+            if(username == ""){
+                clearAll();
+                flag = false;
+                $("#userCheck").html("用户名不能为空!");
+                return;
+            }
+            var pwd = $("#pwd").val();
+            if(pwd == ""){
+                clearAll();
+                flag = false;
+                $("#codeCheck").html("用户名不能为空!");
+                return;
+            }else{
+                clearAll();
+                flag = true;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container-fluid box" style="margin:0px auto;padding-top:10px;">
+    <div class="row-fluid">
+        <div class="main">
+            <div class="col-xs-3">
+                <h1 style="font-size:42px;color:#337AB7;"><b>考试登录系统</b></h1>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="main box">
+            <div class="col-xs-7" style="padding:15px;padding-left:250px">
+                <img src="../img/111.png">
+            </div>
+
+            <div class="col-xs-4 pull-right" style="margin:30px 30px 0px auto;background-color:#FFFFFF;">
+                <form class="col-xs-12"  >
+                    <h4 class="title" style="line-height:3em;margin-bottom:40px;">用户登录</h4>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" >
+                            <a class="glyphicon glyphicon-user" style="font-size:16px;"></a>
+                        </span>
+                        <input class="form-control" name="username" datatype="userName" needle="needle"
+                               msg="请您输入正确的用户名" placeholder="请输入用户名"
+                               style="height:44px;line-height:24px;font-size:16px;" id="userName" onblur="check()">
+                    </div>
+                    <p><label id="userCheck" /></p>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon" >
+                            <a class="glyphicon glyphicon-lock" style="font-size:16px;"></a>
+                        </span>
+                        <input class="form-control" name="password" datatype="password" needle="needle"
+                               msg="请您输入正确的密码" placeholder="请输入密码" type="password" id="pwd"
+                               style="height:44px;line-height:24px;font-size:16px;" onblur="check()">
+                    </div>
+                    <p><label id="codeCheck" /></p>
+                    <button type="button" class="btn btn-primary btn-block" onclick="login()"
+                            style="height:44px;line-height:32px;font-size:16px;margin-top:30px;">登录</button>
+                        <a class="btn btn-default btn-block" href="register.html"
+                           style="height:44px;line-height:32px;font-size:16px;margin-top:10px;">注册</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>

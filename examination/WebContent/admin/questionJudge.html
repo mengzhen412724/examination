@@ -1,0 +1,146 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>考试登录系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<link rel="stylesheet" type="text/css" href="../js/jquery/css/jquery-ui.css" />-->
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/peskin.css" />
+
+
+    <!--bootstrap.min.css，引用后成功-->
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap-table.css" />
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap3.3.7/js/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="../js/core.js"></script>
+    <script>
+
+        var examinationId = getQueryString("examinationId");
+//        if(!user){
+//            window.location.href = "../student/login.html";
+//        }
+        var user_name ;
+        var ques_id = 1 ;
+        var ques_type ;
+        var ques_desc = "";
+        var standard_answer = "";
+        var user_answer = "";
+        var normal = 10;
+        var flag = false;
+        var regx = "/[\\d]/.test(String.fromCharCode(event.keyCode))";
+        $(function () {
+            getQues();
+        })
+        
+        function getQues() {
+            $.get('http://'+localhost+':'+port+'/examination/result/swChoice?examinationId='+examinationId,
+                function (data) {
+                if(data.length == 1){
+                    ques_desc = data[0].QUESTION_DESC;
+                    user_name = data[0].USER_NAME;
+                    ques_id = data[0].QUESTIONS_ID;
+                    standard_answer = data[0].STANDARD_ANSWER;
+                    user_answer = data[0].USER_ANSWER;
+                    ques_type = data[0].QUESTION_TYPE;
+                    if(ques_type == 3){
+                        normal = data[0].GAP_FILLING_SCORE;
+                    }else if(ques_type == 4){
+                        normal = data[0].SHORT_ANSWER_QUESTION_SCORE;
+                    }
+                    initAnswer();
+                }else if(data.length == 0){
+                    $("#content").empty();
+                    $("#scoreTitle").html('打分完毕!');
+                }
+
+            })
+        }
+        
+        
+        function initAnswer() {
+
+            var abc = ' <input id="userId" style="display: none" value="'+user_name
+                +'" /><h4 class="title">'+ques_desc+'</h4>'
+                +'<table class="table table-bordered" style="width: 70%">'
+                +'<tbody> <tr  class="info"> <td width="50%">考生答案</td> <td width="50%">参考答案</td> </tr>'
+                +'<tr> <td height="200px">'+user_answer+'</td>'
+                +'<td >'+standard_answer+'</td> </tr> </tbody> </table>'
+                +'<div class="col-lg-4" style="margin-top: 20px">'
+                +'<h4 style="float: left;padding-right: 20px">本题<span>'+normal+'</span>分，请打分</h4>'
+                +'<div class="input-group"> <input id="getScore" type="text" class="form-control"' +
+                ' onblur="checkScore()" placeholder="请打分" onkeypress="return ('+regx+')" > ' +
+                '<span class="input-group-btn"> ' +
+                '<button class="btn btn-default" type="button" onclick="next()">下一题</button> ' +
+                '</span> </div> <span id="showMsg" style="width: 100px;color: red;font-size: 14px;"></span> </div>';
+            $("#content").empty();
+            $("#content").append(abc);
+        }
+
+        function next() {
+            checkScore();
+
+            if(flag){
+                updateScore();
+            }
+        }
+        
+        function updateScore() {
+            var score = $("#getScore").val();
+            $.get(
+                'http://'+localhost+':'+port+'/examination/exam/update',
+                {
+                    'USER_NAME':user_name,
+                    'EXAMINATIOM_ID':parseInt(examinationId),
+                    'QUESTIONS_ID':parseInt(ques_id),
+                    'CHECK_USER':'system',
+                    'CHECK_SCORE':parseInt(score)
+                },
+                function (data) {
+                    alert(data);
+                    getQues();
+                }
+            )
+        }
+        
+        
+        function checkScore() {
+            var score = $("#getScore").val();
+            if(!score){
+                flag = false;
+                $("#showMsg").html("分数不能为空");
+            }else{
+                if(parseInt(score) < 0 || parseInt(score) > normal){
+                    flag = false;
+                    $("#showMsg").html("得分不能超过标准分值"+normal+"分");
+                }else{
+                    flag = true;
+                }
+            }
+
+        }
+
+
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="main box">
+                <div class="box itembox">
+                    <h2 class="text-center tt" id="scoreTitle" style="margin-top:0px;margin-bottom: -10px ">主观题打分</h2>
+                </div>
+                <div class="box itembox" id="content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body></html>

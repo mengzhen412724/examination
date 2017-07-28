@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>考试登录系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<link rel="stylesheet" type="text/css" href="../js/jquery/css/jquery-ui.css" />-->
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/peskin.css" />
+
+
+    <!--bootstrap.min.css，引用后成功-->
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap-table.css" />
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap3.3.7/js/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="../js/core.js"></script>
+    <script src="../js/detail.js"></script>
+    <script>
+        var user = getQueryString("username");
+        var cookie_user = getCookie("loginName");
+        if(!user || !cookie_user || cookie_user ==""){
+            window.location.href = "./login.html";
+        }
+        if(cookie_user != user){
+            window.location.href = "./login.html";
+        }
+        var id = getQueryString("id");
+        var total_score = getQueryString("totalScore");
+        var test_name = getQueryString("testName");
+        $(function () {
+            $("#total_score").html(total_score);
+            $("#test_name").html(decodeURI(test_name));
+            init();
+        })
+        function init(){
+           $.get(
+               'http://'+localhost+':'+port+'/examination/result/allQuestions',{"userName":decodeURI(user),"examinationId":id},
+               function (data) {
+                   datas_datil = data;
+                   init_detail();
+               }
+           );
+        }
+
+
+
+
+
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="main box">
+                <div class="scoreArea" id="total_score" >100</div>
+                <div class="box itembox">
+                    <h2 class="text-center tt" style="margin-top: 0px;margin-bottom: -10px" id="test_name">考试名称</h2>
+                </div>
+                <hr>
+                <div class="box itembox" id="single_detail">
+                    <blockquote class="questype" >单选题</blockquote>
+                </div>
+                <hr>
+                <div class="box itembox" id="mulity_detail">
+                    <blockquote class="questype" >多选题</blockquote>
+                </div>
+                <hr>
+                <div class="box itembox"  id="judge_detail">
+                    <blockquote class="questype" >判断题</blockquote>
+                </div>
+                <hr>
+                <div class="box itembox" id="fill_detail">
+                    <blockquote class="questype" >填空题</blockquote>
+                </div>
+                <hr>
+                <div class="box itembox" id="ques_detail">
+                    <blockquote class="questype" >简答题</blockquote>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+
+
+</body></html>

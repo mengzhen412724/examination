@@ -1,0 +1,109 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>考试登录系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<link rel="stylesheet" type="text/css" href="../js/jquery/css/jquery-ui.css" />-->
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/peskin.css" />
+
+
+    <!--bootstrap.min.css，引用后成功-->
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap-table.css" />
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+
+    <script src="../js/jquery/js/jquery-ui.js"></script>
+    <script src="../js/jquery/js/jquery.json.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap3.3.7/js/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="../js/core.js"></script>
+
+    <script>
+        var user = getQueryString("username");
+        var cookie_user = getCookie("loginName");
+        if(!user || !cookie_user || cookie_user ==""){
+            window.location.href = "./login.html";
+        }
+        if(cookie_user != user){
+            window.location.href = "./login.html";
+        }
+        $(function () {
+            init();
+        })
+        function init(){
+            $table = $('#result_table').bootstrapTable({
+                method: 'get',
+                url: 'http://'+localhost+':'+port+'/examination/result/allResult?userName='+user,
+                height:$(window).height() - 200,
+                striped: true,
+                pagination: false,
+                dataType:'json',
+                pageSize: 50,
+                pageList: [10, 25, 50, 100, 200],
+                search: false,
+                sidePagination: "client",
+                showColumns: false,
+                showHeader:true,
+                clickToSelect:true,
+                minimunCountColumns: 2,
+                checkboxHeader:true,
+                singleSelect:true,
+                columns: [
+                    {
+                        field: 'examId',
+                        title: 'id',
+                        width: 100,
+                        sortable: true
+                    },{
+                        field: 'time',
+                        title: '考试时间',
+                        width: 100,
+                        sortable: true
+                }, {
+                    field: 'name',
+                    title: '考试名称',
+                    width: 100,
+                    sortable: true
+                }, {
+                    field: 'total',
+                    title: '考生总成绩',
+                    width: 100,
+                    sortable: true,
+                }, {
+                    field: 'ANSWER_A',
+                    title: '试题解析',
+                    formatter:function(value,row,index){
+                        return "<a onclick='gotoDetail("+row.examId+",\""+row.name+"\",\""+row.total+"\")'>查看详情</a>";
+                    },
+
+                    width: 100,
+                    sortable: true
+                }]
+
+            });
+        }
+
+
+        function gotoDetail(id,name,to){
+            window.open("./detail.html?username="+user+"&id="+id+"&testName="+name+"&totalScore="+to);
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="row-fluid">
+    <div class="main">
+        <div class="box itembox">
+            <h4 class="title">考试结果</h4>
+            <table id="result_table"></table>
+        </div>
+    </div>
+</div>
+
+
+</body></html>

@@ -1,0 +1,150 @@
+
+        <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">x</button>
+            <h3 class="modal-title" id="myModalLabel">新增考试安排</h3>
+        </div>
+
+        <div class="modal-body">
+            <form class="form-horizontal"  >
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">考试开始时间</label>
+                    <div class="col-sm-9">
+                        <input id="start"  type="text" class="Wdate" name="startTime"
+                               onfocus="WdatePicker({isShowClear:false,readOnly:true,skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                    </div>
+
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">考试结束时间</label>
+                    <div class="col-sm-9">
+                        <input id="end"  type="text" class="Wdate" name="endTime"
+                               onfocus="WdatePicker({isShowClear:false,readOnly:true,skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">考试名称</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="testname1"
+                                class="form-control"  onblur="checkthis(this)">
+                        <span   style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">单选题个数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="singlenum"
+                               placeholder="请输入单选题个数"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" class="form-control">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">单选题分数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="singlescore"
+                               placeholder="请输入单选题分数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">多选题个数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="multiplenum"
+                               placeholder="请输入多选题个数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">多选题分数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="multiplescore"
+                               placeholder="请输入多选题分数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">判断题个数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="judgenum"
+                               placeholder="请输入判断题个数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">判断题分数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="judgescore"
+                               placeholder="请输入判断题分数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">填空题个数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="fillnum"
+                               placeholder="请输入简答题个数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">填空题分数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="fillscore"
+                               placeholder="请输入简答题分数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">简答题个数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="questionnum"
+                               placeholder="请输入简答题个数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">简答题分数</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="questionscore"
+                               placeholder="请输入简答题分数" class="form-control"
+                               onblur="checkthis(this)"
+                               onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))">
+                        <span  style="color: red"></span>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">总分</label>
+                    <div class="col-sm-9">
+                        <input style="width:180px" type="text" id="total" readonly value="0"
+                                class="form-control">
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label">考试说明</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="illustrate" style="width: 90%;height: 100px"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer" >
+            <button type="button"  id="save" onclick="testSubmit()" class="btn btn-primary">保存</button>
+            <button type="button" data-dismiss="modal" class="btn btn-default">取消</button>
+        </div>

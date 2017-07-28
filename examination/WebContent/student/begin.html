@@ -1,0 +1,184 @@
+<html><head>
+    <meta charset="UTF-8">
+    <title>在线考试系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/fluid.css">
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/peskin.css">
+
+    <!--&lt;!&ndash;[if lt IE 9]>-->
+    <!--<script src="app/core/styles/js/html5shiv.min.js"></script>-->
+    <!--<script src="app/core/styles/js/respond.min.js"></script>-->
+    <!--<![endif]&ndash;&gt;-->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/core.js"></script>
+    <script language="JavaScript">
+        javascript:window.history.forward(1);
+    </script>
+    <style type="text/css">
+        .itembox {
+            padding: 0px 20px 15px 20px;
+        }
+        .box {
+            background-color: #FFFFFF;
+            margin: 10px auto 0px auto;
+            height: auto;
+            overflow: hidden;
+            display: block;
+        }
+        .mytable{
+            margin: 30px;
+        }
+    </style>
+    <script>
+        var user = getQueryString("loginName");
+        var cookie_user = getCookie("loginName");
+        var info = getQueryString("info");
+        var interv;
+        var time;
+        var testname="";
+        var start = "";
+        var end = "";
+        var left = "";
+        var examId ;
+        if(!user || !cookie_user || cookie_user == "" ){
+            window.location.href = "./login.html";
+        }
+        if(cookie_user != user){
+            window.location.href = "./login.html";
+        }
+        $.get('http://'+localhost+':'+port+'/examination/exam/get',{'id':examId},function(data){
+            testname = data.EXAMINATIOM_NAME;
+            start = data.EXAMINATIOM_START_TIME;
+            end = data.EXAMINATIOM_END_TIME;
+            left = data.LEFTTIME;
+            examId = parseInt(data.id);
+            $("#testname2").html(testname);
+            $("#testTime1").html(changeTime(start)+"   -    "+changeTime(end));
+            if( left > (end-start)/1000){
+                $("#left1").css("display","none");
+                $("#left2").css("display","block");
+                if(info){
+                    $("#left2").html(decodeURI(info));
+                }else{
+                    $("#left2").html("考试已结束！");
+                }
+
+            }else if(left < 0){
+                $("#left1").css("display","block");
+                $("#left2").css("display","none");
+                time = -parseInt(left);
+                interv = setInterval(getLeft,1000);
+            }else{
+                $("#left1").css("display","none");
+                $("#left2").css("display","block");
+                if(info){
+                    $("#left2").html(decodeURI(info));
+                }else{
+                    $("#left2").html("考试进行中。。。");
+                }
+            }
+
+        },'json');
+
+
+
+
+
+        function getLeft() {
+            time--;
+            $("#timeleft").html(time);
+            if (time == 0){
+                clearInterval(interv);
+                $("#left1").css("display","none");
+                $("#left2").css("display","block");
+                $("#left2").html("考试开始，请点击左侧图标进入！");
+            }
+        }
+        function back() {
+            if(left == ""){
+                $("#left2").html("当前无考试！");
+            }else if(left < 0){
+                $("#left2").html("考试尚未开始！");
+            }else if(left > (end-start)/1000){
+                $("#left2").html("考试已结束！");
+            }else{
+                $.get(
+                    'http://'+localhost+':'+port+'/examination/exam/mit?userName='+decodeURI(user)+'&examinationId='+examId,
+                    function (data) {
+                        if(data.indexOf('尚未')>0){
+                            $("#left1").css("display","none");
+                            $("#left2").css("display","block");
+                            $("#left2").html("已参加考试，请查看成绩！");
+                        }else{
+                            window.location.href = './start.html?loginName='
+                                +user+"&start="+start+"&end="+end+"&examinationId="
+                                +examId+"&left="+left+"&testname="+testname;
+                        }
+
+                    },'text');
+            }
+
+        }
+
+        function  gotoResult() {
+            window.open("./result.html?username="+user);
+        }
+        
+        
+    </script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="main">
+            <div class="box itembox">
+                <h4 class="title">考试安排</h4>
+                <div class="col-xs-3" style="width:20%">
+                    <a onclick="back()" class="thumbnail" style="border:0px;">
+                        <img src="../img/t3.png" alt="" width="100%">
+                    </a>
+                    <h5 class="text-center">开始考试</h5>
+                </div>
+
+                <div class="col-xs-3" style="width:20%">
+                    <form class="form-horizontal"   >
+                        <div class="form-group mytable" style="width:650px;">
+                            <label class="col-sm-3 control-label">考试名称:</label>
+                            <div class="col-sm-9" style="float: left">
+                                <label style="margin: 5px" id="testname2"></label>
+                            </div>
+                        </div>
+                        <div class="form-group mytable"  style="width:650px;">
+                            <label class="col-sm-3 control-label">考试时间:</label>
+                            <div class="col-sm-9" style="float: left">
+                                <label style="margin: 5px" id="testTime1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group mytable"  style="width:650px;">
+                            <label class="col-sm-3 control-label">距考试时间:</label>
+                            <div class="col-sm-9" style="float: left">
+                                <label style="margin: 5px;display: none" id="left1" ><span id="timeleft"></span>秒后开始考试</label>
+                                <label id="left2"  style="display: block;margin: 5px">当前无考试！</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="box itembox">
+                <h4 class="title">查询结果</h4>
+                <div class="col-xs-3" style="width:20%">
+                    <a onclick="gotoResult()" class="thumbnail" style="border:0px;">
+                        <img src="../img/t8.png" alt="" width="100%">
+                    </a>
+                    <h5 class="text-center">成绩单</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body></html>

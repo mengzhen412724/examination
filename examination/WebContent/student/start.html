@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>考试登录系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="../js/jquery/css/peskin.css" />
+    <!--bootstrap.min.css，引用后成功-->
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap3.3.7/css/bootstrap.min.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <!--[if !IE]> -->
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <!-- <![endif]-->
+
+
+    <!--[if lte IE 8]>
+    <script src="../js/jquery/js/jquery-1.11.1.min.js"></script>
+    <![endif]-->
+
+    <!--[if gt IE 8]>
+    <script src="../js/jquery/js/jquery.min.js"></script>
+    <![endif]-->
+    <script src="../js/jquery/js/jquery-ui.js"></script>
+    <script src="../js/jquery/js/jquery.json.js"></script>
+    <script src="../js/bootstrap3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap3.3.7/js/plugin.js"></script>
+    <script src="../js/plugin.js"></script>
+    <script src="../js/core.js"></script>
+    <script src="../js/start.js"></script>
+    <script language="JavaScript">
+        javascript:window.history.forward(1);
+    </script>
+</head>
+
+
+
+
+
+<body data-spy="scroll" data-target="#myScrollspy">
+
+
+<div class="container-fluid" id="questioncontent">
+    <div class="row-fluid">
+        <div class="main box">
+            <div class="col-xs-3" id="questionbar">
+                <dl class="clear" style="width:270px;" data-spy="affix" data-offset-top="235" >
+                    <dd>
+                        <h2>
+                            <a class="btn btn-danger col-xs-12" style="font-size:1.2em;">
+                            <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span>
+                            </a>
+
+                        </h2>
+                    </dd>
+                    <dt class="float_l"><h4>&nbsp;</h4></dt>
+
+                    <ul class="nav nav-tabs"  role="tablist">
+                        <li role="presentation" class="active" id="oneSection">
+                            <a href="#qt_1" aria-controls="home" role="tab" data-toggle="tab">单选</a>
+                        </li>
+                        <li role="presentation" id="twoSection">
+                            <a href="#qt_2" aria-controls="home" role="tab" data-toggle="tab">多选</a>
+                        </li>
+                        <li role="presentation" id="threeSection">
+                            <a href="#qt_3" aria-controls="home" role="tab" data-toggle="tab">判断</a>
+                        </li>
+                        <li role="presentation" id="fourSection">
+                            <a href="#qt_4" aria-controls="home" role="tab" data-toggle="tab">填空</a>
+                        </li>
+                        <li role="presentation" id="fiveSection">
+                            <a href="#qt_5" aria-controls="home" role="tab" data-toggle="tab">简答</a>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content" style="margin-top:5px;" id="questionindex">
+                        <div role="tabpanel" class="tab-pane tableindex active" id="qt_1">
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane tableindex" id="qt_2">
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane tableindex" id="qt_3">
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane tableindex" id="qt_4">
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane tableindex" id="qt_5">
+
+
+                        </div>
+                    </div>
+                </dl>
+            </div>
+            <!--form 中 action="index.php?exam-app-exampaper-score-->
+            <form id="form1" name="form1" method="post" action="" class="col-xs-9 split pull-right" style="padding:0px;">
+                <div class="box itembox">
+                    <h2 class="text-center" style="float: left;padding-left: 300px">河南移动测试</h2>
+                    <h3 class="text-center" style="float: right">
+                        <input type="hidden" name="insertscore" value="1"/>
+                        <a class="btn btn-primary" style="font-size:16px;width:100px;"
+                           href="#submodal" role="button" onclick="getAnsered()" data-toggle="modal">交 卷</a>
+                    </h3>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="submodal" tabindex="-1" role="dialog"  aria-hidden="true" aria-labelledby="myModalLabel">
+        <div class="modal-dialog"  >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"  id="myModalLabel">交卷</h4>
+                </div>
+                <div class="modal-body">
+                    <p>共有试题 <span class="allquestionnumber">50</span> 题，已做
+                        <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+                    <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        if(left <= 0){
+            window.location.href = "./begin.html?loginName="+user+"info=考试已结束！";
+        }else{
+            var setting = {
+                time:(end-start)/60000,
+                hbox:$("#timer_h"),
+                mbox:$("#timer_m"),
+                sbox:$("#timer_s"),
+                finish:function(){
+                       submitPaper();
+                }
+            }
+            setting.lefttime = parseInt(left);
+            countdown(setting);
+        }
+
+        $.get('http://'+localhost+':'+port+'/examination/exam/getQuestions',function(result){
+            var len = result.length;
+            singleCount = result[0].length;
+            multipleCount = result[1].length;
+            judgeCount = result[2].length;
+            questionCount = result[4].length;
+            fillCount = result[3].length;
+            total = singleCount+multipleCount+judgeCount+questionCount+fillCount;
+            datas = result;
+            initPage();
+        });
+    });
+
+    function addListen(){
+        initData = $.parseJSON(storage.getItem('questions'));
+        if(initData){
+            for(var p in initData){
+                if(p!='set')
+                    formData[p]=initData[p];
+                $("#time_"+$('[name="'+p+'"]').attr('rel')).val(initData[p].time);
+            }
+
+            var textarea = $('#form1 textarea');
+            $.each(textarea,function(){
+                var _this = $(this);
+                if(initData[_this.attr('name')])
+                {
+                    _this.val(initData[_this.attr('name')].value);
+//                    CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')].value);
+                    if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+                        batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+                }
+            });
+            var texts = $('#form1 :input[type=text]');
+            $.each(texts,function(){
+                var _this = $(this);
+                if(initData[_this.attr('name')])
+                {
+                    _this.val(initData[_this.attr('name')]?initData[_this.attr('name')].value:'');
+                    if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+                        batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+                }
+            });
+
+            var radios = $('#form1 :input[type=radio]');
+            $.each(radios,function(){
+                var _= this, v = initData[_.name]?initData[_.name].value:null;
+                var _this = $(this);
+                if(v!=''&&v==_.value){
+                    _.checked = true;
+                    batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+                }else{
+                    _.checked=false;
+                }
+            });
+
+            var checkboxs=$('#form1 :input[type=checkbox]');
+            $.each(checkboxs,function(){
+                var _=this,v=initData[_.name]?initData[_.name].value:null;
+                var _this = $(this);
+                if(v!=''&&v==_.value){
+                    _.checked=true;
+                    batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+                }else{
+                    _.checked=false;
+                }
+            });
+        }
+
+        $('#form1 :input[type=text]').change(function(){
+            var _this=$(this);
+            var p=[];
+            p.push(_this.attr('name'));
+            p.push(_this.val());
+            p.push(Date.parse(new Date())/1000);
+            $('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
+            set.apply(formData,p);
+            markQuestion(_this.attr('rel'),true);
+        });
+
+        $('#form1 :input[type=radio]').change(function(){
+            var _=this;
+            var _this=$(this);
+            var p=[];
+            p.push(_.name);
+            if(_.checked){
+                p.push(_.value);
+                p.push(Date.parse(new Date())/1000);
+                $('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
+                set.apply(formData,p);
+            }else{
+                p.push('');
+                p.push(null);
+                set.apply(formData,p);
+            }
+            markQuestion(_this.attr('rel'));
+        });
+
+        $('#form1 textarea').change(function(){
+            var _= this;
+            var _this=$(this);
+            var p=[];
+            p.push(_.name);
+            p.push(_.value);
+            p.push(Date.parse(new Date())/1000);
+            $('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
+            set.apply(formData,p);
+            markQuestion(_this.attr('rel'),true);
+        });
+
+        $('#form1 :input[type=checkbox]').change(function(){
+            var _= this;
+            var _this = $(this);
+            var p=[];
+            p.push(_.name);
+            if(_.checked){
+                p.push(_.value);
+                p.push(Date.parse(new Date())/1000);
+                $('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
+                set.apply(formData,p);
+            }else{
+                p.push('');
+                p.push(null);
+                set.apply(formData,p);
+            }
+            markQuestion(_this.attr('rel'));
+        });
+    }
+</script>
+
+
+
+</body>
+</html>
